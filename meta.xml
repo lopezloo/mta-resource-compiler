@@ -1,0 +1,10 @@
+<meta>
+    <info author="lopezloo" type="misc" name="Resource compiler" version="1.0" />
+
+    <script src="compile.lua" type="server" />
+    <script src="cmds.lua" type="server" />
+    <aclrequest>
+        <right name="function.fetchRemote" access="true"></right>
+        <right name="general.ModifyOtherObjects" access="true"></right>
+    </aclrequest>
+</meta>
