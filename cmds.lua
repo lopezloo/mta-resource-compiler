@@ -14,7 +14,7 @@ addCommandHandler("setting",
 	function(player, cmd, setting, value)
 		if hasObjectPermissionTo(player, "general.ModifyOtherObjects") then
 			if compileSettings[setting] then
-				if value == "0" or value == "1" or setting == "extension" then
+				if value == "0" or value == "1" or setting == "extensionInput" or setting == "extensionOutput" then
 					compileSettings[setting] = value
 					outputServerLog("Setting changed.")
 				else
