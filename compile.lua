@@ -13,9 +13,9 @@ local files = {
 compileSettings = {
 	debug = 0,
 	obfuscate = 1,
-	blockdecompile = 1,
 	encrypt = 1,
-	extension = ".luac",
+	extensionInput = ".lua",
+	extensionOutput = ".luac",
 }
 
 local currentCompile = {
@@ -37,8 +37,10 @@ function compileResource(resourceName)
 	for k, v in pairs( xmlNodeGetChildren(metaNode) ) do
 		local src = xmlNodeGetAttribute(v, "src")
 		if xmlNodeGetName(v) == "script" then
-			local scriptType = xmlNodeGetAttribute(v, "type") or "server"
-			table.insert( files[ scriptType ], src )
+			if string.find(src, compileSettings.extensionInput) and not string.find(src, compileSettings.extensionOutput) then
+				local scriptType = xmlNodeGetAttribute(v, "type") or "server"
+				table.insert( files[ scriptType ], src )
+			end
 
 		elseif xmlNodeGetName(v) == "file" or xmlNodeGetName(v) == "map" then -- copying files/map
 			local filepath = ":" .. resourceName .. "/" .. src
@@ -60,7 +62,7 @@ function onCodeCompiled(data, errno, typeID, id)
 	local src = string.gsub(files[ fileTypes[typeID] ][id], ".lua", "")
 	local filepath = currentCompile.path .. src
 	if errno == 0 then
-		local file = fileCreate(filepath .. compileSettings.extension)
+		local file = fileCreate(filepath .. compileSettings.extensionOutput)
 		fileWrite(file, data)
 		fileClose(file)
 	else
@@ -81,7 +83,7 @@ function endCompiling()
 	local meta = fileOpen(":" .. currentCompile.resource .. "/meta.xml")
 	local metaData = fileRead(meta, fileGetSize(meta))
 	fileClose(meta)
-	metaData = string.gsub(metaData, '.lua"', compileSettings.extension .. '"') -- changing .lua extensions in copied meta to new extension, todo: what if code use other extension?
+	metaData = string.gsub(metaData, '.lua"', compileSettings.extensionOutput .. '"') -- changing .lua extensions in copied meta to new extension, todo: what if code use other extension?
 
 	local copiedMeta = fileCreate(currentCompile.path .. "meta.xml")
 	fileWrite(copiedMeta, metaData)
@@ -112,5 +114,5 @@ function compileCode(typeID, id)
 	local file = fileOpen(":" .. currentCompile.resource .. "/" .. files[ fileTypes[typeID] ][id])
 	local data = fileRead(file, fileGetSize(file))
 	fileClose(file)
-	fetchRemote("http://luac.mtasa.com/?compile=1&debug=" .. compileSettings.debug .. "&obfuscate=" .. compileSettings.obfuscate .. "&blockdecompile=" .. compileSettings.blockdecompile .. "&encrypt=" .. compileSettings.encrypt, onCodeCompiled, data, true, typeID, id)
+	fetchRemote("http://luac.mtasa.com/?compile=1&debug=" .. compileSettings.debug .. "&obfuscate=" .. compileSettings.obfuscate .. "&encrypt=" .. compileSettings.encrypt, onCodeCompiled, data, true, typeID, id)
 end
