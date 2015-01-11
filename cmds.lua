@@ -18,10 +18,10 @@ addCommandHandler("setting",
 					compileSettings[setting] = value
 					outputServerLog("Setting changed.")
 				else
-					outputServerLog("ERROR: Wrong value (can be 0 or 1).")
+					outputServerLog("ERROR: Wrong value.")
 				end
 			else
-				outputServerLog("ERROR: This setting doesn't exist (you can change: debug, obfuscate, blockdecompile, encrypt, extension).")
+				outputServerLog("ERROR: This setting doesn't exist (you can change: debug, obfuscate, blockdecompile, encrypt, extensionInput, extensionOutput).")
 			end
 		end
 	end

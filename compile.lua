@@ -59,7 +59,7 @@ function compileResource(resourceName)
 end
 
 function onCodeCompiled(data, errno, typeID, id)
-	local src = string.gsub(files[ fileTypes[typeID] ][id], ".lua", "")
+	local src = string.gsub(files[ fileTypes[typeID] ][id], compileSettings.extensionInput, "")
 	local filepath = currentCompile.path .. src
 	if errno == 0 then
 		local file = fileCreate(filepath .. compileSettings.extensionOutput)
@@ -83,7 +83,7 @@ function endCompiling()
 	local meta = fileOpen(":" .. currentCompile.resource .. "/meta.xml")
 	local metaData = fileRead(meta, fileGetSize(meta))
 	fileClose(meta)
-	metaData = string.gsub(metaData, '.lua"', compileSettings.extensionOutput .. '"') -- changing .lua extensions in copied meta to new extension, todo: what if code use other extension?
+	metaData = string.gsub(metaData, compileSettings.extensionInput .. '"', compileSettings.extensionOutput .. '"') -- changing old extensions in copied meta to new ones
 
 	local copiedMeta = fileCreate(currentCompile.path .. "meta.xml")
 	fileWrite(copiedMeta, metaData)
